@@ -4,7 +4,12 @@ version = "0.1"
 description = "Walnut + Jupyter packaged as a Python client"
 readme = "README.md"
 authors = [
-    { name = "Nicolas Ollinger", email = "nicolas.ollinger@univ-orleans.fr" }
+    { name = "Nicolas Ollinger", email = "nopid@free.fr" }
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: BSD License",
+    "Programming Language :: Python :: 3",
 ]
 requires-python = ">=3.12"
 dependencies = [
@@ -16,6 +21,9 @@ dependencies = [
     "quarto-cli>=1.6.42",
     "walnut-kernel>=0.3.3",
 ]
+
+[project.urls]
+Homepage = "https://github.com/nopid/walnut_cli"
 
 [project.scripts]
 walnut = "walnut_cli:main"
