@@ -118,6 +118,9 @@ def main() -> None:
             gen_dir(P(daenv.get("WALNUT_HOME", ".")))
         if args.max_memory is not None:
             daenv["WALNUT_MEM"] = args.max_memory
+        if "WALNUT_HOME" not in daenv:
+            daenv["WALNUT_HOME"] = os.getcwd()
+            gen_dir(P(daenv.get("WALNUT_HOME", ".")))
         args.func(args)
     else:
         parser.print_help()
