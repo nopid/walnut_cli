@@ -62,14 +62,18 @@ def do_render(args):
     zipdst = qmd.stem + ".zip"
     for file in [qmd] + [P(f).resolve() for f in args.extras]:
         shutil.copy(file, tmpdir)
-    gen_dir(tmpdir)
     (tmpdir / "out").mkdir(exist_ok=True)
+    (tmpdir / "Walnut").mkdir(exist_ok=True)
+    gen_dir(tmpdir / "Walnut")
     if inittar:
         subprocess.run(["tar", "xvf", str(inittar)], cwd=tmpdir / "Walnut", check=True)
     daenv["WALNUT_HOME"] = str(tmpdir / "Walnut")
+    daenv["QUARTO_PYTHON"] = find_venv_executable("python3")
+    print(daenv["WALNUT_HOME"])
     run(
         f"{quarto} add --no-prompt --quiet {str(_PACKAGE_DIRECTORY / 'aux' / 'downloadthis.zip')}",
         cwd=tmpdir,
+        env=daenv,
         shell=True,
         check=True,
     )
@@ -77,6 +81,7 @@ def do_render(args):
     run(
         f"{quarto} render {qmd_file} --output-dir out --execute --cache --execute-daemon 1000000",
         cwd=tmpdir,
+        env=daenv,
         shell=True,
         check=True,
     )
