@@ -110,16 +110,20 @@ parser.add_argument(
 )
 subparsers = parser.add_subparsers()
 
-parser_shell = subparsers.add_parser("shell")
+parser_shell = subparsers.add_parser("shell", help="start Walnut console")
 parser_shell.set_defaults(func=do_shell)
 
-parser_lab = subparsers.add_parser("lab")
+parser_lab = subparsers.add_parser("lab", help="start Jupyter lab")
 parser_lab.set_defaults(func=do_lab)
 
-parser_notebook = subparsers.add_parser("notebook")
+parser_notebook = subparsers.add_parser(
+    "notebook", help="start Jupyter notebook (default)"
+)
 parser_notebook.set_defaults(func=do_notebook)
 
-parser_render = subparsers.add_parser("render")
+parser_render = subparsers.add_parser(
+    "render", help="render Walnut notebook with quarto"
+)
 parser_render.set_defaults(func=do_render)
 parser_render.add_argument("--init", type=P, help="path to initialization tar archive")
 parser_render.add_argument("qmd", type=P, help="path to .qmd file")
