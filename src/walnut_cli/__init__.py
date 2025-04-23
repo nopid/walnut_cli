@@ -12,6 +12,16 @@ daenv["JAVA"] = str(JAVA)
 daenv["WALNUT_JAR"] = str(_PACKAGE_DIRECTORY / "aux" / "walnut-6.2.jar")
 
 
+def find_venv_executable(name: str) -> P:
+    venv_bin = P(sys.executable).parent
+    exe = shutil.which(name, path=str(venv_bin))
+    if exe:
+        return P(exe)
+    raise FileNotFoundError(
+        f"'{name}' not found in current Python environment ({venv_bin})"
+    )
+
+
 def gen_dir(whome):
     for s in [
         "Automata Library",
@@ -27,18 +37,22 @@ def gen_dir(whome):
 
 
 def do_shell(args):
-    sys.exit(call("jupyter console --kernel=Walnut", env=daenv, shell=True))
+    jupyter = find_venv_executable("jupyter")
+    sys.exit(call(f"{jupyter} console --kernel=Walnut", env=daenv, shell=True))
 
 
 def do_notebook(args):
-    sys.exit(call("jupyter notebook", env=daenv, shell=True))
+    jupyter = find_venv_executable("jupyter")
+    sys.exit(call(f"{jupyter} notebook", env=daenv, shell=True))
 
 
 def do_lab(args):
-    sys.exit(call("jupyter lab", env=daenv, shell=True))
+    jupyter = find_venv_executable("jupyter")
+    sys.exit(call(f"{jupyter} lab", env=daenv, shell=True))
 
 
 def do_render(args):
+    quarto = find_venv_executable("quarto")
     origdir = P.cwd()
     tmpdir = P(mkdtemp())
     print(f"Going to {tmpdir}")
@@ -54,14 +68,14 @@ def do_render(args):
         subprocess.run(["tar", "xvf", str(inittar)], cwd=tmpdir / "Walnut", check=True)
     daenv["WALNUT_HOME"] = str(tmpdir / "Walnut")
     run(
-        f"quarto add --no-prompt --quiet {str(_PACKAGE_DIRECTORY / 'aux' / 'downloadthis.zip')}",
+        f"{quarto} add --no-prompt --quiet {str(_PACKAGE_DIRECTORY / 'aux' / 'downloadthis.zip')}",
         cwd=tmpdir,
         shell=True,
         check=True,
     )
     shutil.copy(_PACKAGE_DIRECTORY / "aux" / "walnut.xml", tmpdir)
     run(
-        f"quarto render {qmd_file} --output-dir out --execute --cache --execute-daemon 1000000",
+        f"{quarto} render {qmd_file} --output-dir out --execute --cache --execute-daemon 1000000",
         cwd=tmpdir,
         shell=True,
         check=True,
