@@ -12,14 +12,16 @@ daenv["JAVA"] = str(JAVA)
 daenv["WALNUT_JAR"] = str(_PACKAGE_DIRECTORY / "aux" / "walnut-6.2.jar")
 
 
-def find_venv_executable(name: str) -> P:
-    venv_bin = P(sys.executable).parent
-    exe = shutil.which(name, path=str(venv_bin))
-    if exe:
-        return P(exe)
-    raise FileNotFoundError(
-        f"'{name}' not found in current Python environment ({venv_bin})"
-    )
+def find_executable(name: str) -> P:
+    locations = [str(P(sys.executable).parent)]
+    if "VIRTUAL_ENV" in os.environ:
+        locations.append(str(P(os.environ["VIRTUAL_ENV"]) / "bin"))
+    locations.append(None)
+    for loc in locations:
+        exe = shutil.which(name, path=loc)
+        if exe:
+            return P(exe)
+    raise FileNotFoundError(f"'{name}' not found")
 
 
 def gen_dir(whome):
@@ -37,22 +39,22 @@ def gen_dir(whome):
 
 
 def do_shell(args):
-    jupyter = find_venv_executable("jupyter")
+    jupyter = find_executable("jupyter")
     sys.exit(call(f"{jupyter} console --kernel=Walnut", env=daenv, shell=True))
 
 
 def do_notebook(args):
-    jupyter = find_venv_executable("jupyter")
+    jupyter = find_executable("jupyter")
     sys.exit(call(f"{jupyter} notebook", env=daenv, shell=True))
 
 
 def do_lab(args):
-    jupyter = find_venv_executable("jupyter")
+    jupyter = find_executable("jupyter")
     sys.exit(call(f"{jupyter} lab", env=daenv, shell=True))
 
 
 def do_render(args):
-    quarto = find_venv_executable("quarto")
+    quarto = find_executable("quarto")
     origdir = P.cwd()
     tmpdir = P(mkdtemp())
     print(f"Going to {tmpdir}")
@@ -68,7 +70,7 @@ def do_render(args):
     if inittar:
         subprocess.run(["tar", "xvf", str(inittar)], cwd=tmpdir / "Walnut", check=True)
     daenv["WALNUT_HOME"] = str(tmpdir / "Walnut")
-    daenv["QUARTO_PYTHON"] = find_venv_executable("python3")
+    daenv["QUARTO_PYTHON"] = find_executable("python3")
     print(daenv["WALNUT_HOME"])
     run(
         f"{quarto} add --no-prompt --quiet {str(_PACKAGE_DIRECTORY / 'aux' / 'downloadthis.zip')}",
@@ -122,7 +124,7 @@ parser_notebook = subparsers.add_parser(
 parser_notebook.set_defaults(func=do_notebook)
 
 try:
-    quarto = find_venv_executable("quarto")
+    quarto = find_executable("quarto")
     parser_render = subparsers.add_parser(
         "render", help="render Walnut notebook with quarto"
     )
