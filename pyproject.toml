@@ -1,6 +1,6 @@
 [project]
 name = "walnut-cli"
-version = "0.5"
+version = "0.6"
 description = "Walnut + Jupyter packaged as a Python client"
 readme = "README.md"
 authors = [
@@ -18,8 +18,12 @@ dependencies = [
     "jupyter>=1.1.1",
     "jupyter-cache>=1.0.1",
     "pydot>=3.0.4",
-    "quarto-cli>=1.6.42",
     "walnut-kernel>=0.3.3",
+]
+
+[project.optional-dependencies]
+render = [
+    "quarto-cli>=1.6.42"
 ]
 
 [project.urls]

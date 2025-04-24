@@ -121,13 +121,21 @@ parser_notebook = subparsers.add_parser(
 )
 parser_notebook.set_defaults(func=do_notebook)
 
-parser_render = subparsers.add_parser(
-    "render", help="render Walnut notebook with quarto"
-)
-parser_render.set_defaults(func=do_render)
-parser_render.add_argument("--init", type=P, help="path to initialization tar archive")
-parser_render.add_argument("qmd", type=P, help="path to .qmd file")
-parser_render.add_argument("extras", nargs=REMAINDER, help="additional files to copy")
+try:
+    quarto = find_venv_executable("quarto")
+    parser_render = subparsers.add_parser(
+        "render", help="render Walnut notebook with quarto"
+    )
+    parser_render.set_defaults(func=do_render)
+    parser_render.add_argument(
+        "--init", type=P, help="path to initialization tar archive"
+    )
+    parser_render.add_argument("qmd", type=P, help="path to .qmd file")
+    parser_render.add_argument(
+        "extras", nargs=REMAINDER, help="additional files to copy"
+    )
+except:
+    pass
 
 parser.set_defaults(func=do_notebook)
 

@@ -1591,7 +1591,7 @@ wheels = [
 
 [[package]]
 name = "walnut-cli"
-version = "0.4"
+version = "0.5"
 source = { editable = "." }
 dependencies = [
     { name = "ipython" },
@@ -1599,8 +1599,12 @@ dependencies = [
     { name = "jupyter" },
     { name = "jupyter-cache" },
     { name = "pydot" },
-    { name = "quarto-cli" },
     { name = "walnut-kernel" },
+]
+
+[package.optional-dependencies]
+render = [
+    { name = "quarto-cli" },
 ]
 
 [package.metadata]
@@ -1610,7 +1614,7 @@ requires-dist = [
     { name = "jupyter", specifier = ">=1.1.1" },
     { name = "jupyter-cache", specifier = ">=1.0.1" },
     { name = "pydot", specifier = ">=3.0.4" },
-    { name = "quarto-cli", specifier = ">=1.6.42" },
+    { name = "quarto-cli", marker = "extra == 'render'", specifier = ">=1.6.42" },
     { name = "walnut-kernel", specifier = ">=0.3.3" },
 ]
 
