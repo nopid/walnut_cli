@@ -13,7 +13,7 @@ daenv["WALNUT_JAR"] = str(_PACKAGE_DIRECTORY / "aux" / "walnut-6.2.jar")
 
 
 def find_executable(name: str) -> P:
-    locations = [str(P(sys.executable).parent)]
+    locations = [str(P(sys.executable).parent.resolve(strict=False))]
     if "VIRTUAL_ENV" in os.environ:
         locations.append(str(P(os.environ["VIRTUAL_ENV"]) / "bin"))
     locations.append(None)
